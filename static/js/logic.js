@@ -13,3 +13,13 @@ var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
     id: "mapbox/light-v10",
     accessToken: API_KEY
 });
+
+// Define baseMaps Object for Base Layers
+var baseMaps = {
+    "Lightmap": lightmap,
+};
+
+// Create Overlay Object for Overlay Layers
+var overlayMaps = {
+    "Earthquakes": earthquakes,
+};
