@@ -23,3 +23,13 @@ var baseMaps = {
 var overlayMaps = {
     "Earthquakes": earthquakes,
 };
+
+// Create the Map
+var myMap = L.map("mapid", {
+    center: [40.7608, -111.8910],
+    zoom: 5,
+    layers: {lightmap, earthquakes}
+});
+
+// Create a Layer Control
+L.control.layers(baseMaps, overlayMaps).addTo(myMap);
