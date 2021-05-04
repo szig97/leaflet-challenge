@@ -33,3 +33,15 @@ var myMap = L.map("mapid", {
 
 // Create a Layer Control
 L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+
+// Retrieve earthquakesURL with D3
+d3.json(earthquakesURL, function(earthquakesURL) {
+    // Function to Determine marker size
+    function markerSize(magnitude) {
+        if (magnitude === 0) {
+            return 1;
+        }
+        return magnitude * 3;
+    }
+    
+})
