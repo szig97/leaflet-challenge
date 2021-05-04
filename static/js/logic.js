@@ -1,7 +1,7 @@
 // GeoJSON URL Variables
-var earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_hour.geojson"
+var earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
-// Initialize and Create LayerGroups
+// Initialize and Create LayerGroup
 var earthquakes = new L.LayerGroup();
 
 // Define Variables for Tile Layers
@@ -26,50 +26,66 @@ var overlayMaps = {
 
 // Create the Map
 var myMap = L.map("mapid", {
-    center: [40.7608, -111.8910],
-    zoom: 5,
-    layers: {lightmap, earthquakes}
+    center: [37.09, -95.71],
+    zoom: 4.5,
+    layers: [lightmap, earthquakes]
 });
 
 // Create a Layer Control
 L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-// Retrieve earthquakesURL with D3
-d3.json(earthquakesURL, function(earthquakesURL) {
-    // Function to Determine marker size
-    function markerSize(magnitude) {
-        if (magnitude === 0) {
-            return 1;
+// Create a Function to Draw the Earthquake Data
+function drawEarthquakes(earthquakeData) {
+    // Function to determine marker color
+    var colors = ["#a3f600", "#dcf400", "#f7db11", "#fbd72a", "#fca35d", "#ff5f65"]
+    function color(depth) {
+        var fillingColor = "black";
+        switch(true) {
+            case depth > 90:
+                fillingColor = colors[5];
+                break;
+            case depth > 70:
+                fillingColor = colors[4];
+                break;
+            case depth > 50:
+                fillingColor = colors[3];
+                break;
+            case depth > 30:
+                fillingColor = colors[2];
+                break;
+            case depth > 10:
+                fillingColor = colors[1];
+                break;
+            case depth > -10:
+                fillingColor = colors[0];
+                break;
         }
-        return magnitude * 3;
+        return fillingColor;
     }
     // Function to determine marker style
     function styleInfo(feature) {
         return {
             opacity: 1, 
             fillOpacity: 1,
-            fillColor: chooseColor(feature.properties.mag),
+            fillColor: color(feature.geometry.coordinates[2]),
             color: "#000000",
-            radius: markerSize(feature.properties.mag),
+            radius: 5 * feature.properties.mag,
             stroke: true,
             weight: 0.5
-        };
-    }
-    // Function to determine marker color
-    function chooseColor(magnitude) {
-        switch (true) {
-            case magnitude > 5:
-                return "#581845";
-            case magnitude > 4:
-                return "#900C3F";
-            case magnitude > 3:
-                return "#C70039";
-            case magnitude > 2:
-                return "#FF5733";
-            case magnitude > 1:
-                return "FFC300";
-            default:
-                return "#DAF7A6";
         }
-    }  
-})
+    }
+    // Function for feature popups
+    function onEachFeature(feature, layer) {
+        layer.bindPopup("<h3>Magnitude: " + feature.properties.mag +
+        "</h3><h3>Depth: " + feature.geometry.coordinates[2] + "</h3><hr><p>" + feature.properties.place + "<p>");
+    }
+
+    // Use GeoJSON to add layers of circles and popups
+    var earthquakes = K.geoJSON(earthquakeData, {
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, styleInfo(feature));
+        },
+        onEachFeature: onEachFeature
+    }).addTo(earthquakes);
+    earthquakes.addTo(myMap);
+}
