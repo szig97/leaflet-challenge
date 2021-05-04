@@ -43,5 +43,16 @@ d3.json(earthquakesURL, function(earthquakesURL) {
         }
         return magnitude * 3;
     }
-    
+    // Function to determine marker style
+    function styleInfo(feature) {
+        return {
+            opacity: 1, 
+            fillOpacity: 1,
+            fillColor: chooseColor(feature.properties.mag),
+            color: "#000000",
+            radius: markerSize(feature.properties.mag),
+            stroke: true,
+            weight: 0.5
+        };
+    }   
 })
