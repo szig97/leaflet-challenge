@@ -54,5 +54,22 @@ d3.json(earthquakesURL, function(earthquakesURL) {
             stroke: true,
             weight: 0.5
         };
-    }   
+    }
+    // Function to determine marker color
+    function chooseColor(magnitude) {
+        switch (true) {
+            case magnitude > 5:
+                return "#581845";
+            case magnitude > 4:
+                return "#900C3F";
+            case magnitude > 3:
+                return "#C70039";
+            case magnitude > 2:
+                return "#FF5733";
+            case magnitude > 1:
+                return "FFC300";
+            default:
+                return "#DAF7A6";
+        }
+    }  
 })
