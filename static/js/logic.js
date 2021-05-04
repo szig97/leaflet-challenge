@@ -12,7 +12,7 @@ var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
     zoomOffset: -1,
     id: "mapbox/light-v10",
     accessToken: API_KEY
-});
+    });
 
 // Define baseMaps Object for Base Layers
 var baseMaps = {
@@ -34,8 +34,8 @@ var myMap = L.map("mapid", {
 // Create a Layer Control
 L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-// Create a Function to Draw the Earthquake Data
-function drawEarthquakes(earthquakeData) {
+// Retrieve earthquakesURL using D3
+d3.json(earthquakesURL, function(earthquakeData) {
     // Function to determine marker color
     var colors = ["#a3f600", "#dcf400", "#f7db11", "#fbd72a", "#fca35d", "#ff5f65"]
     function color(depth) {
@@ -74,18 +74,16 @@ function drawEarthquakes(earthquakeData) {
             weight: 0.5
         }
     }
-    // Function for feature popups
-    function onEachFeature(feature, layer) {
-        layer.bindPopup("<h3>Magnitude: " + feature.properties.mag +
-        "</h3><h3>Depth: " + feature.geometry.coordinates[2] + "</h3><hr><p>" + feature.properties.place + "<p>");
-    }
-
     // Use GeoJSON to add layers of circles and popups
-    var earthquakes = K.geoJSON(earthquakeData, {
+    L.geoJSON(earthquakeData, {
         pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, styleInfo(feature));
         },
-        onEachFeature: onEachFeature
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup("<h3>Magnitude: " + feature.properties.mag +
+            "</h3><h3>Depth: " + feature.geometry.coordinates[2] + "</h3><hr><p>" + feature.properties.place + "<p>");
+        }
     }).addTo(earthquakes);
     earthquakes.addTo(myMap);
-}
+});
+
