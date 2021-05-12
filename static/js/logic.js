@@ -1,3 +1,5 @@
+// Referenced Andy McRae's code when attempting to get the circles to show.
+
 // GeoJSON URL Variables
 var earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
@@ -35,7 +37,8 @@ var myMap = L.map("mapid", {
 L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
 // Retrieve earthquakesURL using D3
-d3.json(earthquakesURL, function(earthquakeData) {
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(earthquakeData) {
+    console.log(earthquakeData);
     // Function to determine marker color
     var colors = ["#a3f600", "#dcf400", "#f7db11", "#fbd72a", "#fca35d", "#ff5f65"]
     function color(depth) {
@@ -72,13 +75,14 @@ d3.json(earthquakesURL, function(earthquakeData) {
             radius: 5 * feature.properties.mag,
             stroke: true,
             weight: 0.5
-        }
+        };
     }
     // Use GeoJSON to add layers of circles and popups
     L.geoJSON(earthquakeData, {
-        pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, styleInfo(feature));
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng);
         },
+        style: styleInfo,
         onEachFeature: function(feature, layer) {
             layer.bindPopup("<h3>Magnitude: " + feature.properties.mag +
             "</h3><h3>Depth: " + feature.geometry.coordinates[2] + "</h3><hr><p>" + feature.properties.place + "<p>");
@@ -86,4 +90,3 @@ d3.json(earthquakesURL, function(earthquakeData) {
     }).addTo(earthquakes);
     earthquakes.addTo(myMap);
 });
-
