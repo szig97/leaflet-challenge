@@ -1,7 +1,4 @@
-// Referenced Andy McRae's code when attempting to get the circles to show.
-
-// GeoJSON URL Variables
-var earthquakesURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
+// Referenced Andy McRae's code to complete the assignment
 
 // Initialize and Create LayerGroup
 var earthquakes = new L.LayerGroup();
@@ -89,4 +86,32 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         }
     }).addTo(earthquakes);
     earthquakes.addTo(myMap);
+
+    // Legend Setup
+    var limits = ["-10-10", "10-30", "30-50", "50-70", "70-90", "90+"];
+
+    var legend = L.control({ position: "bottomright" });
+    legend.onAdd = function() {
+        var div = L.DomUtil.create("div", "info legend");
+        var labels = [];
+
+        var legendInfo = "<u1 class=\"labels\">";
+        var legendEnd = "</u1>";
+
+        for (i=0; i < limits.length; i++) {
+            labels.push(
+                "<li style=\"background-color: " + colors[i] + "\"></li" + "div class=\labels\">" + limits[i] + "</div>"
+            );
+        }
+        
+        legendInfo = legendInfo + legendEnd;
+
+        div.innerHTML = legendInfo;
+
+        div.innerHTML += "<u1>" + labels.join("") + "</u1>";
+        return div;
+    };
+    
+    // Add legend to map
+    legend.addTo(myMap);
 });
